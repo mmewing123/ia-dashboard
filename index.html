@@ -8,266 +8,100 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <style>
     :root {
-      --orange: #F15A24;
-      --navy:   #112E52;
-      --blue:   #2E6DA4;
-      --light:  #F5F8FB;
-      --mid:    #EEF3F8;
-      --gray:   #444444;
-      --green:  #2E8B57;
-      --amber:  #E8A000;
-      --red:    #C0392B;
-      --white:  #ffffff;
+      --orange: #F15A24; --navy: #112E52; --blue: #2E6DA4;
+      --light: #F5F8FB; --mid: #EEF3F8; --gray: #444444;
+      --green: #2E8B57; --amber: #E8A000; --red: #C0392B;
+      --white: #ffffff; --purple: #6B46C1; --teal: #0E7490;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'IBM Plex Sans', sans-serif; background: var(--light); color: var(--gray); }
 
-    body {
-      font-family: 'IBM Plex Sans', sans-serif;
-      background: var(--light);
-      color: var(--gray);
-      min-height: 100vh;
-    }
+    /* HEADER */
+    .header { background: var(--navy); padding: 14px 32px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 14px rgba(0,0,0,0.25); }
+    .header-inner { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .header-left h1 { font-size: 1.15rem; font-weight: 700; color: white; }
+    .header-left .sub { font-size: 0.70rem; color: #A8C4DC; margin-top: 2px; }
+    .header-right { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .badge { background: var(--orange); color: white; font-size: 0.66rem; font-weight: 600; padding: 4px 12px; border-radius: 20px; white-space: nowrap; text-transform: uppercase; }
+    .slider-wrap { display: flex; align-items: center; gap: 10px; }
+    .slider-wrap label { font-size: 0.70rem; color: #A8C4DC; font-weight: 500; white-space: nowrap; }
+    .month-display { font-size: 0.82rem; font-weight: 600; color: white; min-width: 58px; text-align: right; }
+    #monthSlider { -webkit-appearance: none; width: 160px; height: 4px; background: rgba(255,255,255,0.18); border-radius: 2px; outline: none; cursor: pointer; }
+    #monthSlider::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: var(--orange); border-radius: 50%; box-shadow: 0 0 0 3px rgba(241,90,36,0.3); cursor: pointer; }
+    #monthSlider::-moz-range-thumb { width: 15px; height: 15px; background: var(--orange); border-radius: 50%; border: none; cursor: pointer; }
 
-    /* ── HEADER ──────────────────────────────────────────────── */
-    .header {
-      background: var(--navy);
-      padding: 14px 32px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 14px rgba(0,0,0,0.25);
-    }
-    .header-inner {
-      max-width: 1400px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .header-left h1 {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: white;
-      letter-spacing: 0.2px;
-    }
-    .header-left .sub {
-      font-size: 0.70rem;
-      color: #A8C4DC;
-      margin-top: 2px;
-      font-weight: 400;
-    }
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-    .badge {
-      background: var(--orange);
-      color: white;
-      font-size: 0.66rem;
-      font-weight: 600;
-      padding: 4px 12px;
-      border-radius: 20px;
-      white-space: nowrap;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-    .slider-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .slider-wrap label {
-      font-size: 0.70rem;
-      color: #A8C4DC;
-      font-weight: 500;
-      white-space: nowrap;
-    }
-    .month-display {
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: white;
-      min-width: 58px;
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-    #monthSlider {
-      -webkit-appearance: none;
-      width: 160px;
-      height: 4px;
-      background: rgba(255,255,255,0.18);
-      border-radius: 2px;
-      outline: none;
-      cursor: pointer;
-    }
-    #monthSlider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 15px; height: 15px;
-      background: var(--orange);
-      border-radius: 50%;
-      box-shadow: 0 0 0 3px rgba(241,90,36,0.3);
-      cursor: pointer;
-    }
-    #monthSlider::-moz-range-thumb {
-      width: 15px; height: 15px;
-      background: var(--orange);
-      border-radius: 50%;
-      border: none;
-      cursor: pointer;
-    }
-
-    /* ── CONTAINER ───────────────────────────────────────────── */
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 26px 24px 48px;
-    }
-
-    /* ── SECTION LABEL ───────────────────────────────────────── */
-    .section-label {
-      display: inline-block;
-      background: var(--navy);
-      color: white;
-      font-size: 0.66rem;
-      font-weight: 700;
-      letter-spacing: 1.4px;
-      text-transform: uppercase;
-      padding: 5px 14px;
-      border-radius: 4px;
-      margin-bottom: 16px;
-    }
+    /* LAYOUT */
+    .container { max-width: 1400px; margin: 0 auto; padding: 26px 24px 48px; }
+    .section-label { display: inline-block; color: white; font-size: 0.66rem; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; padding: 5px 14px; border-radius: 4px; margin-bottom: 16px; background: var(--navy); }
     .section-label.orange { background: var(--orange); }
+    .section-label.teal   { background: var(--teal); }
+    .section-label.purple { background: var(--purple); }
+    .section-label.green  { background: var(--green); }
+    .divider { border: none; border-top: 2px solid var(--mid); margin: 28px 0 24px; }
 
-    /* ── KPI GRID ────────────────────────────────────────────── */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-    .kpi-card {
-      background: var(--white);
-      border-radius: 10px;
-      padding: 16px 18px 14px;
-      border-left: 4px solid var(--orange);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-    }
+    /* KPI */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; margin-bottom: 18px; }
+    .kpi-card { background: var(--white); border-radius: 10px; padding: 16px 18px 14px; border-left: 4px solid var(--orange); box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
     .kpi-card.blue   { border-left-color: var(--blue); }
     .kpi-card.green  { border-left-color: var(--green); }
     .kpi-card.amber  { border-left-color: var(--amber); }
-    .kpi-label {
-      font-size: 0.64rem;
-      font-weight: 600;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      color: #888;
-      margin-bottom: 6px;
-    }
-    .kpi-value {
-      font-size: 1.75rem;
-      font-weight: 700;
-      color: var(--navy);
-      line-height: 1.1;
-      font-variant-numeric: tabular-nums;
-    }
-    .kpi-value.sm { font-size: 1.3rem; }
+    .kpi-card.purple { border-left-color: var(--purple); }
+    .kpi-card.teal   { border-left-color: var(--teal); }
+    .kpi-label { font-size: 0.64rem; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: #888; margin-bottom: 6px; }
+    .kpi-value { font-size: 1.75rem; font-weight: 700; color: var(--navy); line-height: 1.1; font-variant-numeric: tabular-nums; }
+    .kpi-value.sm { font-size: 1.3rem; } .kpi-value.xs { font-size: 1.05rem; }
     .kpi-delta { font-size: 0.70rem; margin-top: 6px; color: #888; }
-    .delta-good { color: var(--green); font-weight: 600; }
-    .delta-warn { color: var(--amber); font-weight: 600; }
-    .delta-bad  { color: var(--red);   font-weight: 600; }
+    .delta-good   { color: var(--green);  font-weight: 600; }
+    .delta-warn   { color: var(--amber);  font-weight: 600; }
+    .delta-bad    { color: var(--red);    font-weight: 600; }
+    .delta-purple { color: var(--purple); font-weight: 600; }
+    .delta-teal   { color: var(--teal);   font-weight: 600; }
 
-    /* ── CHART GRID ──────────────────────────────────────────── */
-    .chart-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    .chart-card {
-      background: var(--white);
-      border-radius: 10px;
-      padding: 16px 18px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-    }
-    .chart-title {
-      font-size: 0.74rem;
-      font-weight: 600;
-      color: var(--navy);
-      margin-bottom: 12px;
-    }
+    /* CHARTS */
+    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .chart-card { background: var(--white); border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(0,0,0,0.07); }
+    .chart-title { font-size: 0.74rem; font-weight: 600; color: var(--navy); margin-bottom: 12px; }
+    .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.70rem; font-weight: 500; color: #555; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 
-    /* ── DIVIDER ─────────────────────────────────────────────── */
-    .divider {
-      border: none;
-      border-top: 2px solid var(--mid);
-      margin: 28px 0 24px;
-    }
+    /* TABLES */
+    .sys-table { width: 100%; border-collapse: collapse; font-size: 0.76rem; }
+    .sys-table th { text-align: left; padding: 8px 12px; background: var(--mid); color: var(--navy); font-weight: 600; font-size: 0.64rem; letter-spacing: 0.5px; text-transform: uppercase; }
+    .sys-table td { padding: 8px 12px; border-bottom: 1px solid var(--mid); }
+    .sys-table tr:last-child td { border-bottom: none; }
+    .sys-table tr:hover td { background: #FAFCFE; }
 
-    /* ── SYSTEMS TABLE ───────────────────────────────────────── */
-    .systems-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.76rem;
-    }
-    .systems-table th {
-      text-align: left;
-      padding: 8px 12px;
-      background: var(--mid);
-      color: var(--navy);
-      font-weight: 600;
-      font-size: 0.64rem;
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-    .systems-table td {
-      padding: 8px 12px;
-      border-bottom: 1px solid var(--mid);
-      color: var(--gray);
-    }
-    .systems-table tr:last-child td { border-bottom: none; }
-    .systems-table tr:hover td { background: #FAFCFE; }
+    /* INITIATIVE TRACKER */
+    .init-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .init-table th { text-align: left; padding: 10px 14px; background: var(--navy); color: white; font-weight: 600; font-size: 0.64rem; letter-spacing: 0.8px; text-transform: uppercase; }
+    .init-table td { padding: 12px 14px; border-bottom: 1px solid var(--mid); vertical-align: top; }
+    .init-table tr:last-child td { border-bottom: none; }
+    .init-table tr:hover td { background: #FAFCFE; }
+    .init-name { font-weight: 600; color: var(--navy); font-size: 0.82rem; margin-bottom: 3px; }
+    .init-desc { font-size: 0.70rem; color: #888; }
+    .rag { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.70rem; font-weight: 700; }
+    .rag-green { background: #e8f5ee; color: var(--green); }
+    .rag-amber { background: #fff3cd; color: var(--amber); }
+    .rag-blue  { background: var(--mid); color: var(--blue); }
+    .pb-wrap { background: #EEF3F8; border-radius: 4px; height: 6px; width: 100%; margin-top: 6px; }
+    .pb-fill  { height: 6px; border-radius: 4px; }
 
-    /* ── FOOTER ──────────────────────────────────────────────── */
-    .footer {
-      text-align: center;
-      color: #AAAAAA;
-      font-size: 0.68rem;
-      padding: 20px 0 8px;
-      border-top: 2px solid var(--mid);
-      margin-top: 14px;
-    }
+    /* FOOTER */
+    .footer { text-align: center; color: #AAAAAA; font-size: 0.68rem; padding: 20px 0 8px; border-top: 2px solid var(--mid); margin-top: 14px; }
 
-    /* ── RESPONSIVE ──────────────────────────────────────────── */
-    @media (max-width: 1000px) {
-      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 700px) {
-      .chart-grid { grid-template-columns: 1fr; }
-      .kpi-grid   { grid-template-columns: 1fr 1fr; }
-      #monthSlider { width: 110px; }
-    }
-    @media (max-width: 480px) {
-      .kpi-grid { grid-template-columns: 1fr; }
-      .container { padding: 16px 14px 40px; }
-    }
+    @media (max-width: 1000px) { .kpi-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 700px)  { .chart-grid { grid-template-columns: 1fr; } .kpi-grid { grid-template-columns: 1fr 1fr; } #monthSlider { width: 110px; } }
+    @media (max-width: 480px)  { .kpi-grid { grid-template-columns: 1fr; } .container { padding: 16px 14px 40px; } }
   </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════════ -->
-<!-- HEADER                                                       -->
-<!-- ══════════════════════════════════════════════════════════ -->
 <div class="header">
   <div class="header-inner">
     <div class="header-left">
       <h1>🔶 &nbsp;VP Finance &amp; Administration — Executive Dashboard</h1>
-      <div class="sub">
-        Inductive Automation &nbsp;·&nbsp; Sage Intacct + Lever + Culture Amp &nbsp;·&nbsp;
-        Data through <span id="headerMonth">Mar '25</span>
-      </div>
+      <div class="sub">Inductive Automation &nbsp;·&nbsp; Sage Intacct + Lever + Culture Amp &nbsp;·&nbsp; Data through <span id="headerMonth">Mar '25</span></div>
     </div>
     <div class="header-right">
       <div class="slider-wrap">
@@ -280,180 +114,108 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════ -->
-<!-- MAIN CONTENT                                                 -->
-<!-- ══════════════════════════════════════════════════════════ -->
 <div class="container">
 
-  <!-- ─── SECTION 1: FINANCIAL & INSIGHT ───────────────────── -->
+  <!-- ══ S1: FINANCIAL & INSIGHT ══════════════════════════════════ -->
   <div class="section-label">📊 &nbsp;Financial &amp; Insight</div>
-
   <div class="kpi-grid">
-    <div class="kpi-card blue">
-      <div class="kpi-label">Month-End Close Cycle</div>
-      <div class="kpi-value" id="kpi-close"></div>
-      <div class="kpi-delta" id="kpi-close-delta"></div>
-    </div>
-    <div class="kpi-card blue">
-      <div class="kpi-label">Forecast Accuracy (Variance)</div>
-      <div class="kpi-value" id="kpi-forecast"></div>
-      <div class="kpi-delta" id="kpi-forecast-delta"></div>
-    </div>
-    <div class="kpi-card" id="kpi-budget-card">
-      <div class="kpi-label">Depts Within Budget Threshold</div>
-      <div class="kpi-value" id="kpi-budget"></div>
-      <div class="kpi-delta" id="kpi-budget-delta"></div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">Dashboard Adoption</div>
-      <div class="kpi-value">100%</div>
-      <div class="kpi-delta">
-        <span class="delta-good">ELT: weekly &nbsp;·&nbsp; Dept heads: monthly &nbsp;·&nbsp; Source: Power BI</span>
-      </div>
-    </div>
+    <div class="kpi-card blue"><div class="kpi-label">Month-End Close Cycle</div><div class="kpi-value" id="kpi-close"></div><div class="kpi-delta" id="kpi-close-delta"></div></div>
+    <div class="kpi-card blue"><div class="kpi-label">Forecast Accuracy (Variance)</div><div class="kpi-value" id="kpi-forecast"></div><div class="kpi-delta" id="kpi-forecast-delta"></div></div>
+    <div class="kpi-card" id="kpi-budget-card"><div class="kpi-label">Depts Within Budget Threshold</div><div class="kpi-value" id="kpi-budget"></div><div class="kpi-delta" id="kpi-budget-delta"></div></div>
+    <div class="kpi-card green"><div class="kpi-label">Dashboard Adoption</div><div class="kpi-value">100%</div><div class="kpi-delta"><span class="delta-good">ELT: weekly · Dept heads: monthly · Power BI</span></div></div>
+  </div>
+  <div class="chart-grid">
+    <div class="chart-card"><div class="chart-title">Close Cycle — Days to Close (Monthly)</div><canvas id="chartClose"></canvas></div>
+    <div class="chart-card"><div class="chart-title">Budget Variance by Department</div><canvas id="chartBudget"></canvas></div>
   </div>
 
+  <hr class="divider">
+
+  <!-- ══ S2: REVENUE COMPOSITION (NEW) ════════════════════════════ -->
+  <div class="section-label teal">💰 &nbsp;Revenue Composition</div>
+  <div class="kpi-grid">
+    <div class="kpi-card teal"><div class="kpi-label">Total Revenue Index</div><div class="kpi-value" id="kpi-rev-total"></div><div class="kpi-delta" id="kpi-rev-total-delta"></div></div>
+    <div class="kpi-card teal"><div class="kpi-label">License Revenue Mix</div><div class="kpi-value" id="kpi-rev-license"></div><div class="kpi-delta" id="kpi-rev-license-delta"></div></div>
+    <div class="kpi-card blue"><div class="kpi-label">Support &amp; Maintenance Mix</div><div class="kpi-value" id="kpi-rev-support"></div><div class="kpi-delta" id="kpi-rev-support-delta"></div></div>
+    <div class="kpi-card"><div class="kpi-label">Training &amp; Certification Mix</div><div class="kpi-value" id="kpi-rev-training"></div><div class="kpi-delta" id="kpi-rev-training-delta"></div></div>
+  </div>
   <div class="chart-grid">
     <div class="chart-card">
-      <div class="chart-title">Close Cycle — Days to Close (Monthly)</div>
-      <canvas id="chartClose"></canvas>
+      <div class="chart-title">Revenue Mix — Stream Breakdown (Monthly)</div>
+      <canvas id="chartRevMix"></canvas>
     </div>
     <div class="chart-card">
-      <div class="chart-title">Budget Variance by Department</div>
-      <canvas id="chartBudget"></canvas>
+      <div class="chart-title">Revenue by Stream — Indexed Trend</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#0E7490"></div>License</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2E6DA4"></div>Support</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#F15A24"></div>Training</div>
+      </div>
+      <canvas id="chartRevTrend"></canvas>
     </div>
   </div>
 
   <hr class="divider">
 
-  <!-- ─── SECTION 2: GROWTH & EFFICIENCY ───────────────────── -->
+  <!-- ══ S3: GROWTH & EFFICIENCY ══════════════════════════════════ -->
   <div class="section-label orange">📈 &nbsp;Growth &amp; Efficiency</div>
-
   <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-label">ARR per Employee (vs. Baseline)</div>
-      <div class="kpi-value" id="kpi-ape"></div>
-      <div class="kpi-delta" id="kpi-ape-delta"></div>
-    </div>
-    <div class="kpi-card blue">
-      <div class="kpi-label">SG&amp;A as % of Revenue</div>
-      <div class="kpi-value" id="kpi-sgna"></div>
-      <div class="kpi-delta" id="kpi-sgna-delta"></div>
-    </div>
-    <div class="kpi-card" id="kpi-r40-card">
-      <div class="kpi-label">Rule of 40 Score</div>
-      <div class="kpi-value" id="kpi-r40"></div>
-      <div class="kpi-delta" id="kpi-r40-delta"></div>
-    </div>
-    <div class="kpi-card blue">
-      <div class="kpi-label">IT + Facilities Cost / Headcount</div>
-      <div class="kpi-value">−8.5%</div>
-      <div class="kpi-delta">
-        <span class="delta-warn">Utilization-based optimization &nbsp;·&nbsp; Target: −10%</span>
-      </div>
-    </div>
+    <div class="kpi-card"><div class="kpi-label">ARR per Employee (vs. Baseline)</div><div class="kpi-value" id="kpi-ape"></div><div class="kpi-delta" id="kpi-ape-delta"></div></div>
+    <div class="kpi-card blue"><div class="kpi-label">SG&amp;A as % of Revenue</div><div class="kpi-value" id="kpi-sgna"></div><div class="kpi-delta" id="kpi-sgna-delta"></div></div>
+    <div class="kpi-card" id="kpi-r40-card"><div class="kpi-label">Rule of 40 Score</div><div class="kpi-value" id="kpi-r40"></div><div class="kpi-delta" id="kpi-r40-delta"></div></div>
+    <div class="kpi-card blue"><div class="kpi-label">IT + Facilities Cost / Headcount</div><div class="kpi-value">−8.5%</div><div class="kpi-delta"><span class="delta-warn">Utilization-based optimization · Target: −10%</span></div></div>
   </div>
-
   <div class="chart-grid">
-    <div class="chart-card">
-      <div class="chart-title">ARR per Employee — Indexed Growth</div>
-      <canvas id="chartAPE"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">Rule of 40 — Monthly Trend</div>
-      <canvas id="chartR40"></canvas>
-    </div>
+    <div class="chart-card"><div class="chart-title">ARR per Employee — Indexed Growth</div><canvas id="chartAPE"></canvas></div>
+    <div class="chart-card"><div class="chart-title">Rule of 40 — Monthly Trend</div><canvas id="chartR40"></canvas></div>
   </div>
 
   <hr class="divider">
 
-  <!-- ─── SECTION 3: PEOPLE & RETENTION ────────────────────── -->
+  <!-- ══ S4: PEOPLE & RETENTION ═══════════════════════════════════ -->
   <div class="section-label">👥 &nbsp;People &amp; Retention</div>
-
   <div class="kpi-grid">
-    <div class="kpi-card blue">
-      <div class="kpi-label">Average Time to Fill</div>
-      <div class="kpi-value" id="kpi-ttf"></div>
-      <div class="kpi-delta" id="kpi-ttf-delta"></div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">eNPS Score</div>
-      <div class="kpi-value" id="kpi-enps"></div>
-      <div class="kpi-delta" id="kpi-enps-delta"></div>
-    </div>
-    <div class="kpi-card" id="kpi-turnover-card">
-      <div class="kpi-label">Voluntary Turnover Rate</div>
-      <div class="kpi-value" id="kpi-turnover"></div>
-      <div class="kpi-delta" id="kpi-turnover-delta"></div>
-    </div>
-    <div class="kpi-card blue">
-      <div class="kpi-label">Early Attrition (0–90 Days)</div>
-      <div class="kpi-value" id="kpi-ea"></div>
-      <div class="kpi-delta" id="kpi-ea-delta"></div>
-    </div>
+    <div class="kpi-card blue"><div class="kpi-label">Average Time to Fill</div><div class="kpi-value" id="kpi-ttf"></div><div class="kpi-delta" id="kpi-ttf-delta"></div></div>
+    <div class="kpi-card green"><div class="kpi-label">eNPS Score</div><div class="kpi-value" id="kpi-enps"></div><div class="kpi-delta" id="kpi-enps-delta"></div></div>
+    <div class="kpi-card" id="kpi-turnover-card"><div class="kpi-label">Voluntary Turnover Rate</div><div class="kpi-value" id="kpi-turnover"></div><div class="kpi-delta" id="kpi-turnover-delta"></div></div>
+    <div class="kpi-card blue"><div class="kpi-label">Early Attrition (0–90 Days)</div><div class="kpi-value" id="kpi-ea"></div><div class="kpi-delta" id="kpi-ea-delta"></div></div>
   </div>
-
   <div class="chart-grid">
-    <div class="chart-card">
-      <div class="chart-title">Time to Fill — Days (Average by Month)</div>
-      <canvas id="chartTTF"></canvas>
-    </div>
-    <div class="chart-card">
-      <div class="chart-title">eNPS Score — Monthly Trend</div>
-      <canvas id="charteNPS"></canvas>
-    </div>
+    <div class="chart-card"><div class="chart-title">Time to Fill — Days (Average by Month)</div><canvas id="chartTTF"></canvas></div>
+    <div class="chart-card"><div class="chart-title">eNPS Score — Monthly Trend</div><canvas id="charteNPS"></canvas></div>
   </div>
 
   <hr class="divider">
 
-  <!-- ─── SECTION 4: CONTROL & READINESS ───────────────────── -->
-  <div class="section-label">🔒 &nbsp;Control &amp; Readiness</div>
-
+  <!-- ══ S5: HEADCOUNT PLANNING (NEW) ═════════════════════════════ -->
+  <div class="section-label purple">🏢 &nbsp;Headcount Planning</div>
   <div class="kpi-grid">
-    <div class="kpi-card" id="kpi-rr-card">
-      <div class="kpi-label">Net Revenue Retention (NRR Proxy)</div>
-      <div class="kpi-value" id="kpi-rr"></div>
-      <div class="kpi-delta" id="kpi-rr-delta"></div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">ASC 606 Revenue Recognition</div>
-      <div class="kpi-value">Live ✓</div>
-      <div class="kpi-delta">
-        <span class="delta-good">Fully automated in Sage Intacct &nbsp;·&nbsp; Manual overrides: 0</span>
-      </div>
-    </div>
-    <div class="kpi-card green">
-      <div class="kpi-label">Internal Controls</div>
-      <div class="kpi-value sm">Audit-Ready</div>
-      <div class="kpi-delta">
-        <span class="delta-good">Segregation of duties documented &nbsp;·&nbsp; Last review: current quarter</span>
-      </div>
-    </div>
-    <div class="kpi-card blue">
-      <div class="kpi-label">Consolidation (US + Australia)</div>
-      <div class="kpi-value sm">Multi-Currency</div>
-      <div class="kpi-delta">
-        <span class="delta-good">Real-time consolidated reporting &nbsp;·&nbsp; FX: daily rate</span>
-      </div>
-    </div>
+    <div class="kpi-card purple"><div class="kpi-label">Total Headcount</div><div class="kpi-value" id="kpi-hc"></div><div class="kpi-delta" id="kpi-hc-delta"></div></div>
+    <div class="kpi-card amber"><div class="kpi-label">Open Roles</div><div class="kpi-value" id="kpi-open-roles"></div><div class="kpi-delta" id="kpi-open-roles-delta"></div></div>
+    <div class="kpi-card green"><div class="kpi-label">Offer Acceptance Rate</div><div class="kpi-value" id="kpi-offer"></div><div class="kpi-delta" id="kpi-offer-delta"></div></div>
+    <div class="kpi-card" id="kpi-hcplan-card"><div class="kpi-label">Headcount vs. Plan</div><div class="kpi-value" id="kpi-hcplan"></div><div class="kpi-delta" id="kpi-hcplan-delta"></div></div>
+  </div>
+  <div class="chart-grid">
+    <div class="chart-card"><div class="chart-title">Total Headcount — Monthly Growth</div><canvas id="chartHC"></canvas></div>
+    <div class="chart-card"><div class="chart-title">Open Roles — Monthly Trend</div><canvas id="chartOpenRoles"></canvas></div>
   </div>
 
+  <hr class="divider">
+
+  <!-- ══ S6: CONTROL & READINESS ══════════════════════════════════ -->
+  <div class="section-label">🔒 &nbsp;Control &amp; Readiness</div>
+  <div class="kpi-grid">
+    <div class="kpi-card" id="kpi-rr-card"><div class="kpi-label">Net Revenue Retention (NRR Proxy)</div><div class="kpi-value" id="kpi-rr"></div><div class="kpi-delta" id="kpi-rr-delta"></div></div>
+    <div class="kpi-card green"><div class="kpi-label">ASC 606 Revenue Recognition</div><div class="kpi-value">Live ✓</div><div class="kpi-delta"><span class="delta-good">Fully automated in Sage Intacct · Manual overrides: 0</span></div></div>
+    <div class="kpi-card green"><div class="kpi-label">Internal Controls</div><div class="kpi-value sm">Audit-Ready</div><div class="kpi-delta"><span class="delta-good">Segregation of duties documented · Last review: current quarter</span></div></div>
+    <div class="kpi-card blue"><div class="kpi-label">Consolidation (US + Australia)</div><div class="kpi-value sm">Multi-Currency</div><div class="kpi-delta"><span class="delta-good">Real-time consolidated reporting · FX: daily rate</span></div></div>
+  </div>
   <div class="chart-grid">
-    <div class="chart-card">
-      <div class="chart-title">Renewal Rate — Monthly Trend</div>
-      <canvas id="chartRenewal"></canvas>
-    </div>
+    <div class="chart-card"><div class="chart-title">Renewal Rate — Monthly Trend</div><canvas id="chartRenewal"></canvas></div>
     <div class="chart-card">
       <div class="chart-title">Systems &amp; Integrations — Status</div>
-      <table class="systems-table">
-        <thead>
-          <tr>
-            <th>System</th>
-            <th>Status</th>
-            <th>Last Sync</th>
-            <th>Owner</th>
-          </tr>
-        </thead>
+      <table class="sys-table">
+        <thead><tr><th>System</th><th>Status</th><th>Last Sync</th><th>Owner</th></tr></thead>
         <tbody>
           <tr><td>Sage Intacct (ERP)</td><td>🟢 Live</td><td>Real-time</td><td>Finance</td></tr>
           <tr><td>Lever (ATS)</td><td>🟢 Live</td><td>Daily</td><td>HR / Finance</td></tr>
@@ -466,285 +228,249 @@
     </div>
   </div>
 
-  <div class="footer">
-    Inductive Automation &nbsp;·&nbsp; VP Finance &amp; Administration &nbsp;·&nbsp;
-    Executive Performance Dashboard &nbsp;·&nbsp;
-    <em>Demo — All data is simulated for illustrative purposes</em>
+  <hr class="divider">
+
+  <!-- ══ S7: INTERNATIONAL / AUS (NEW) ════════════════════════════ -->
+  <div class="section-label teal">🌏 &nbsp;International &amp; AUS Entity</div>
+  <div class="kpi-grid">
+    <div class="kpi-card teal"><div class="kpi-label">AUS Headcount</div><div class="kpi-value" id="kpi-aus-hc"></div><div class="kpi-delta" id="kpi-aus-hc-delta"></div></div>
+    <div class="kpi-card teal"><div class="kpi-label">AUS Revenue Contribution</div><div class="kpi-value" id="kpi-aus-rev"></div><div class="kpi-delta" id="kpi-aus-rev-delta"></div></div>
+    <div class="kpi-card blue"><div class="kpi-label">AUD / USD FX Rate</div><div class="kpi-value" id="kpi-fx"></div><div class="kpi-delta" id="kpi-fx-delta"></div></div>
+    <div class="kpi-card green"><div class="kpi-label">Entity Consolidation</div><div class="kpi-value xs">Brisbane ✓</div><div class="kpi-delta"><span class="delta-good">Fully consolidated · Daily FX re-rate · APAC growth focus</span></div></div>
+  </div>
+  <div class="chart-grid">
+    <div class="chart-card"><div class="chart-title">AUS Headcount — Monthly Growth</div><canvas id="chartAUSHC"></canvas></div>
+    <div class="chart-card"><div class="chart-title">AUS Revenue Contribution — Monthly %</div><canvas id="chartAUSRev"></canvas></div>
   </div>
 
-</div><!-- /container -->
+  <hr class="divider">
 
-<!-- ══════════════════════════════════════════════════════════ -->
-<!-- JAVASCRIPT                                                   -->
-<!-- ══════════════════════════════════════════════════════════ -->
+  <!-- ══ S8: INITIATIVE TRACKER (NEW) ═════════════════════════════ -->
+  <div class="section-label purple">🎯 &nbsp;Year-1 Strategic Initiative Tracker</div>
+  <div class="chart-card" style="margin-bottom:0;">
+    <table class="init-table">
+      <thead>
+        <tr>
+          <th style="width:38%">Initiative</th>
+          <th style="width:12%">Status</th>
+          <th style="width:17%">Progress</th>
+          <th style="width:33%">Next Milestone</th>
+        </tr>
+      </thead>
+      <tbody id="initBody"></tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    Inductive Automation &nbsp;·&nbsp; VP Finance &amp; Administration &nbsp;·&nbsp;
+    Executive Performance Dashboard &nbsp;·&nbsp; <em>Demo — All data is simulated for illustrative purposes</em>
+  </div>
+
+</div>
+
 <script>
-// ── DATA ──────────────────────────────────────────────────────────────────────
-const MONTHS    = ["Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Jan '25","Feb '25","Mar '25"];
-const CLOSE     = [10.2, 9.8, 9.4, 8.9, 8.4, 8.0, 7.5, 7.1, 6.8];
-const FORECAST  = [12.4, 11.8, 10.2, 9.1, 8.5, 7.6, 6.9, 6.1, 5.4];
-const DEPT_NAMES= ["Engineering","Sales","Marketing","G&A","HR","IT","Facilities"];
-const BUDGET_VAR= [2.1, 4.8, 3.2, 1.9, 2.7, 5.6, 1.4];
-const ARR_EMP   = [100, 101.2, 102.8, 104.5, 106.1, 107.9, 109.4, 111.2, 113.1];
-const SGNA      = [28.4, 27.9, 27.3, 26.8, 26.2, 25.9, 25.4, 24.9, 24.5];
-const R40       = [34, 35, 36, 37, 38, 39, 40, 41, 42];
-const TTF       = [45.2, 44.1, 43.0, 41.5, 40.2, 38.9, 37.5, 36.4, 35.8];
-const ENPS      = [32, 33, 34, 35, 36, 37, 38, 39, 41];
-const TURNOVER  = [14.2, 13.8, 13.1, 12.5, 11.9, 11.2, 10.6, 10.1, 9.7];
-const EARLY_AT  = [18.5, 17.8, 16.9, 15.7, 14.5, 13.8, 13.1, 12.4, 12.1];
-const RENEWAL   = [87.2, 88.1, 88.9, 89.3, 89.8, 90.2, 90.6, 91.0, 91.4];
+// ── DATA ───────────────────────────────────────────────────────────────────────
+const MONTHS   = ["Jul '24","Aug '24","Sep '24","Oct '24","Nov '24","Dec '24","Jan '25","Feb '25","Mar '25"];
+const CLOSE    = [10.2,9.8,9.4,8.9,8.4,8.0,7.5,7.1,6.8];
+const FORECAST = [12.4,11.8,10.2,9.1,8.5,7.6,6.9,6.1,5.4];
+const DEPT_N   = ["Engineering","Sales","Marketing","G&A","HR","IT","Facilities"];
+const BUDGET_V = [2.1,4.8,3.2,1.9,2.7,5.6,1.4];
+const ARR_EMP  = [100,101.2,102.8,104.5,106.1,107.9,109.4,111.2,113.1];
+const SGNA     = [28.4,27.9,27.3,26.8,26.2,25.9,25.4,24.9,24.5];
+const R40      = [34,35,36,37,38,39,40,41,42];
+const TTF      = [45.2,44.1,43.0,41.5,40.2,38.9,37.5,36.4,35.8];
+const ENPS     = [32,33,34,35,36,37,38,39,41];
+const TURNOVER = [14.2,13.8,13.1,12.5,11.9,11.2,10.6,10.1,9.7];
+const EARLY_AT = [18.5,17.8,16.9,15.7,14.5,13.8,13.1,12.4,12.1];
+const RENEWAL  = [87.2,88.1,88.9,89.3,89.8,90.2,90.6,91.0,91.4];
 
-// ── COLORS ────────────────────────────────────────────────────────────────────
-const C = {
-  orange: '#F15A24', navy: '#112E52', blue: '#2E6DA4',
-  green: '#2E8B57', amber: '#E8A000', red: '#C0392B'
-};
+// Revenue composition
+const MIX_LIC  = [64.2,64.5,64.8,65.2,65.6,66.0,66.3,66.7,67.1];
+const MIX_SUP  = [26.4,26.3,26.1,26.0,25.9,25.8,25.7,25.6,25.4];
+const MIX_TRN  = [9.4,9.2,9.1,8.8,8.5,8.2,8.0,7.7,7.5];
+const IDX_LIC  = [100,101.2,103.1,105.4,107.8,110.6,113.1,115.9,119.0];
+const IDX_SUP  = [100,100.8,102.0,103.4,105.1,106.9,108.5,110.2,112.0];
+const IDX_TRN  = [100,101.5,102.2,103.8,105.6,107.3,109.0,111.1,113.5];
 
-function hex2rgba(hex, a) {
-  const [r,g,b] = [1,3,5].map(i => parseInt(hex.slice(i,i+2),16));
-  return `rgba(${r},${g},${b},${a})`;
-}
+// Headcount
+const HC       = [355,358,361,364,367,370,373,375,377];
+const HC_PLAN  = [354,357,360,363,367,370,372,375,378];
+const OPEN_R   = [22,21,19,18,16,15,13,12,11];
+const OFFER_A  = [82,83,85,86,87,88,89,90,91];
 
-// ── CHART HELPERS ─────────────────────────────────────────────────────────────
+// International
+const AUS_HC   = [21,22,23,24,25,26,27,27,28];
+const AUS_REV  = [10.2,10.5,10.9,11.2,11.5,11.8,12.0,12.2,12.5];
+const FX_RATE  = [0.655,0.661,0.658,0.647,0.652,0.644,0.638,0.643,0.649];
+
+// Initiatives
+const INITS = [
+  { name:"Integrate &amp; Unify HR and Finance Functions", desc:"Clear reporting lines, collaboration mechanisms, and shared goals across Finance &amp; HR", rag:"green", ragLbl:"On Track", prog:72, owner:"VP Finance &amp; Admin", ms:"Unified Finance/HR leadership cadence — Q2 launch" },
+  { name:"Enhance Financial Planning, Analytics &amp; Reporting", desc:"FP&amp;A tooling, rolling forecasts, and exec dashboards (Power BI + Adaptive Insights)", rag:"green", ragLbl:"On Track", prog:58, owner:"Director of Finance", ms:"Adaptive Insights pilot go-live — next budget cycle" },
+  { name:"Employee Experience &amp; Retention Initiatives", desc:"Onboarding improvements, performance management cycle, and eNPS action plans", rag:"amber", ragLbl:"In Progress", prog:41, owner:"HR Director", ms:"Performance review framework rollout — Q3" },
+  { name:"Build High-Performing, Data-Driven Teams", desc:"Recruit and develop Finance &amp; HR talent; embed data-driven decision-making", rag:"amber", ragLbl:"In Progress", prog:34, owner:"VP Finance &amp; Admin", ms:"FP&amp;A Analyst hire + KPI cadence — Q3" }
+];
+
+// ── COLORS ─────────────────────────────────────────────────────────────────────
+const C = { orange:'#F15A24', navy:'#112E52', blue:'#2E6DA4', green:'#2E8B57', amber:'#E8A000', red:'#C0392B', purple:'#6B46C1', teal:'#0E7490' };
+const r2a = (hex,a) => { const [r,g,b]=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)); return `rgba(${r},${g},${b},${a})`; };
+
 Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
 
-function makeTrendChart(id, labels, data, color, target, minY) {
-  return new Chart(document.getElementById(id).getContext('2d'), {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Actual',
-          data,
-          borderColor: color,
-          backgroundColor: hex2rgba(color, 0.08),
-          borderWidth: 2.5,
-          pointRadius: 4,
-          pointBackgroundColor: color,
-          pointBorderColor: '#fff',
-          pointBorderWidth: 1.5,
-          fill: true,
-          tension: 0.35,
-          order: 1
-        },
-        {
-          label: 'Target',
-          data: labels.map(() => target),
-          borderColor: C.orange,
-          borderWidth: 1.5,
-          borderDash: [5, 5],
-          pointRadius: 0,
-          fill: false,
-          tension: 0,
-          order: 2
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: 2.4,
-      animation: { duration: 200 },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => ctx.dataset.label === 'Target'
-              ? `Target: ${ctx.raw}`
-              : `${ctx.raw}`
-          }
-        }
-      },
-      scales: {
-        x: {
-          grid: { display: false },
-          ticks: { font: { size: 10 }, maxRotation: 30, color: '#888' }
-        },
-        y: {
-          min: minY,
-          grid: { color: '#F0F0F0' },
-          ticks: { font: { size: 10 }, color: '#888' }
-        }
-      }
-    }
+// ── CHART BUILDERS ─────────────────────────────────────────────────────────────
+function trendChart(id, lbl, data, color, target, minY) {
+  return new Chart(document.getElementById(id), {
+    type:'line',
+    data:{ labels:lbl, datasets:[
+      { data, borderColor:color, backgroundColor:r2a(color,0.08), borderWidth:2.5, pointRadius:4, pointBackgroundColor:color, pointBorderColor:'#fff', pointBorderWidth:1.5, fill:true, tension:0.35, order:1 },
+      { data:lbl.map(()=>target), borderColor:C.orange, borderWidth:1.5, borderDash:[5,5], pointRadius:0, fill:false, tension:0, order:2 }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:true, aspectRatio:2.4, animation:{duration:200}, plugins:{legend:{display:false}},
+      scales:{ x:{grid:{display:false},ticks:{font:{size:10},maxRotation:30,color:'#888'}}, y:{min:minY,grid:{color:'#F0F0F0'},ticks:{font:{size:10},color:'#888'}} } }
   });
 }
 
-function makeBarChart(id) {
-  const colors = BUDGET_VAR.map(v => v > 3 ? C.red : v > 2.4 ? C.amber : C.green);
-  return new Chart(document.getElementById(id).getContext('2d'), {
-    data: {
-      labels: DEPT_NAMES,
-      datasets: [
-        {
-          type: 'bar',
-          label: 'Variance %',
-          data: BUDGET_VAR,
-          backgroundColor: colors,
-          borderRadius: 4,
-          order: 2
-        },
-        {
-          type: 'line',
-          label: 'Threshold 3%',
-          data: DEPT_NAMES.map(() => 3),
-          borderColor: C.orange,
-          borderWidth: 1.5,
-          borderDash: [5, 5],
-          pointRadius: 0,
-          fill: false,
-          tension: 0,
-          order: 1
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: true,
-      aspectRatio: 2.4,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: { label: ctx => `${Number(ctx.raw).toFixed(1)}%` }
-        }
-      },
-      scales: {
-        x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#888' } },
-        y: {
-          grid: { color: '#F0F0F0' },
-          ticks: { font: { size: 10 }, color: '#888', callback: v => v + '%' }
-        }
-      }
-    }
+function simpleLineChart(id, lbl, data, color, minY) {
+  return new Chart(document.getElementById(id), {
+    type:'line',
+    data:{ labels:lbl, datasets:[{ data, borderColor:color, backgroundColor:r2a(color,0.08), borderWidth:2.5, pointRadius:4, pointBackgroundColor:color, pointBorderColor:'#fff', pointBorderWidth:1.5, fill:true, tension:0.35 }]},
+    options:{ responsive:true, maintainAspectRatio:true, aspectRatio:2.4, animation:{duration:200}, plugins:{legend:{display:false}},
+      scales:{ x:{grid:{display:false},ticks:{font:{size:10},maxRotation:30,color:'#888'}}, y:{min:minY,grid:{color:'#F0F0F0'},ticks:{font:{size:10},color:'#888'}} } }
   });
 }
 
-// ── INIT ALL CHARTS ───────────────────────────────────────────────────────────
-const CHARTS = {};
-
-function initCharts(idx) {
-  const m   = idx + 1;
-  const lbl = MONTHS.slice(0, m);
-  CHARTS.close   = makeTrendChart('chartClose',   lbl, CLOSE.slice(0,m),  C.blue,   6,                        4);
-  CHARTS.ape     = makeTrendChart('chartAPE',     lbl, ARR_EMP.slice(0,m),C.orange, 115,                      98);
-  CHARTS.r40     = makeTrendChart('chartR40',     lbl, R40.slice(0,m),    C.green,  40,                       28);
-  CHARTS.ttf     = makeTrendChart('chartTTF',     lbl, TTF.slice(0,m),    C.blue,   Math.round(TTF[0]*0.8),   30);
-  CHARTS.enps    = makeTrendChart('charteNPS',    lbl, ENPS.slice(0,m),   C.green,  ENPS[0]+10,               28);
-  CHARTS.renewal = makeTrendChart('chartRenewal', lbl, RENEWAL.slice(0,m),C.orange, 90,                       84);
-  CHARTS.budget  = makeBarChart('chartBudget');
+function multiLineChart(id, lbl, series, minY) {
+  return new Chart(document.getElementById(id), {
+    type:'line', data:{ labels:lbl, datasets:series },
+    options:{ responsive:true, maintainAspectRatio:true, aspectRatio:2.4, animation:{duration:200}, plugins:{legend:{display:false}},
+      scales:{ x:{grid:{display:false},ticks:{font:{size:10},maxRotation:30,color:'#888'}}, y:{min:minY,grid:{color:'#F0F0F0'},ticks:{font:{size:10},color:'#888'}} } }
+  });
 }
 
-function updateCharts(idx) {
-  const m   = idx + 1;
-  const lbl = MONTHS.slice(0, m);
-
-  function upd(chart, series) {
-    const tgt = chart.data.datasets[1].data[0]; // constant target value
-    chart.data.labels               = lbl;
-    chart.data.datasets[0].data     = series.slice(0, m);
-    chart.data.datasets[1].data     = lbl.map(() => tgt);
-    chart.update('none');
-  }
-
-  upd(CHARTS.close,   CLOSE);
-  upd(CHARTS.ape,     ARR_EMP);
-  upd(CHARTS.r40,     R40);
-  upd(CHARTS.ttf,     TTF);
-  upd(CHARTS.enps,    ENPS);
-  upd(CHARTS.renewal, RENEWAL);
-  // budget chart is static — no update needed
+function stackedBarChart(id, lbl, lic, sup, trn) {
+  return new Chart(document.getElementById(id), {
+    type:'bar',
+    data:{ labels:lbl, datasets:[
+      { label:'License',  data:lic, backgroundColor:C.teal,   stack:'s' },
+      { label:'Support',  data:sup, backgroundColor:C.blue,   stack:'s' },
+      { label:'Training', data:trn, backgroundColor:C.orange, stack:'s' }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:true, aspectRatio:2.4, animation:{duration:200}, plugins:{legend:{display:false}},
+      scales:{ x:{grid:{display:false},ticks:{font:{size:10},maxRotation:30,color:'#888'},stacked:true}, y:{stacked:true,max:100,grid:{color:'#F0F0F0'},ticks:{font:{size:10},color:'#888',callback:v=>v+'%'}} } }
+  });
 }
 
-// ── KPI UPDATE ────────────────────────────────────────────────────────────────
-const $ = id => document.getElementById(id);
-
-function span(cls, text) { return `<span class="${cls}">${text}</span>`; }
-
-function updateKPIs(idx) {
-  // ── Section 1: Financial & Insight ──────────────────────────────────────
-  const cd  = CLOSE[idx];
-  const dcd = (CLOSE[0] - cd).toFixed(1);
-  $('kpi-close').textContent       = `${cd.toFixed(1)} days`;
-  $('kpi-close-delta').innerHTML   = span(cd <= 7.5 ? 'delta-good':'delta-warn',
-    `↓ ${dcd} days vs. baseline · Target: 6 days`);
-
-  const fa  = FORECAST[idx];
-  const dfa = (FORECAST[0] - fa).toFixed(1);
-  $('kpi-forecast').textContent    = `±${fa.toFixed(1)}%`;
-  $('kpi-forecast-delta').innerHTML= span(fa <= 6 ? 'delta-good':'delta-warn',
-    `↓ ${dfa}pts vs. baseline · Target: ±5%`);
-
-  const inT = BUDGET_VAR.filter(v => v <= 3).length;
-  const out = BUDGET_VAR.length - inT;
-  $('kpi-budget').textContent      = `${inT}/${BUDGET_VAR.length}`;
-  $('kpi-budget-delta').innerHTML  = span(inT >= 5 ? 'delta-good':'delta-warn',
-    `<3% variance target · ${out} dept${out !== 1 ? 's':''} need attention`);
-  $('kpi-budget-card').className   = `kpi-card ${inT >= 5 ? '' : 'amber'}`;
-
-  // ── Section 2: Growth & Efficiency ──────────────────────────────────────
-  const ape  = ARR_EMP[idx];
-  const dape = (ape - 100).toFixed(1);
-  $('kpi-ape').textContent         = `+${dape}%`;
-  $('kpi-ape-delta').innerHTML     = span(parseFloat(dape) >= 8 ? 'delta-good':'delta-warn',
-    `Target: +10–15% · Tracking ahead of target`);
-
-  const sg  = SGNA[idx];
-  const dsg = (SGNA[0] - sg).toFixed(1);
-  $('kpi-sgna').textContent        = `${sg.toFixed(1)}%`;
-  $('kpi-sgna-delta').innerHTML    = span(sg <= 25.5 ? 'delta-good':'delta-warn',
-    `↓ ${dsg}pts since baseline · Target: ~24%`);
-
-  const r40v = R40[idx];
-  $('kpi-r40').textContent         = `${r40v}`;
-  $('kpi-r40-delta').innerHTML     = span(r40v >= 40 ? 'delta-good':'delta-warn',
-    `Growth + Profitability · Target: ≥40 · ${r40v >= 40 ? '✓ On target':'Approaching target'}`);
-  $('kpi-r40-card').className      = `kpi-card ${r40v >= 40 ? 'green':'amber'}`;
-
-  // ── Section 3: People & Retention ───────────────────────────────────────
-  const ttfv = TTF[idx];
-  const pttf = ((TTF[0] - ttfv) / TTF[0] * 100).toFixed(0);
-  $('kpi-ttf').textContent         = `${Math.round(ttfv)} days`;
-  $('kpi-ttf-delta').innerHTML     = span(parseFloat(pttf) >= 15 ? 'delta-good':'delta-warn',
-    `↓ ${pttf}% vs. baseline · Target: −20% (${Math.round(TTF[0]*0.8)} days)`);
-
-  const enpsv = ENPS[idx];
-  const denps = enpsv - ENPS[0];
-  $('kpi-enps').textContent        = `${enpsv}`;
-  $('kpi-enps-delta').innerHTML    = span(denps >= 7 ? 'delta-good':'delta-warn',
-    `+${denps} pts since baseline · Target: +10 pts (${ENPS[0]+10})`);
-
-  const tv = TURNOVER[idx];
-  $('kpi-turnover').textContent    = `${tv.toFixed(1)}%`;
-  $('kpi-turnover-delta').innerHTML= span(tv <= 10.5 ? 'delta-good':'delta-warn',
-    `↓ ${(TURNOVER[0]-tv).toFixed(1)}pts · Target: <10%`);
-  $('kpi-turnover-card').className = `kpi-card ${tv <= 10 ? 'green' : ''}`;
-
-  const ea  = EARLY_AT[idx];
-  const pea = ((EARLY_AT[0] - ea) / EARLY_AT[0] * 100).toFixed(0);
-  $('kpi-ea').textContent          = `${ea.toFixed(1)}%`;
-  $('kpi-ea-delta').innerHTML      = span(parseFloat(pea) >= 25 ? 'delta-good':'delta-warn',
-    `↓ ${pea}% vs. baseline · Target: −30% (${(EARLY_AT[0]*0.7).toFixed(1)}%)`);
-
-  // ── Section 4: Control & Readiness ──────────────────────────────────────
-  const rr = RENEWAL[idx];
-  $('kpi-rr').textContent          = `${rr.toFixed(1)}%`;
-  $('kpi-rr-delta').innerHTML      = span(rr >= 90 ? 'delta-good':'delta-warn',
-    `Renewal rate · Target: >90%`);
-  $('kpi-rr-card').className       = `kpi-card ${rr >= 90 ? 'green' : ''}`;
-
-  // ── Header label ──────────────────────────────────────────────────────────
-  $('headerMonth').textContent = MONTHS[idx];
-  $('sliderLabel').textContent = MONTHS[idx];
+function budgetBarChart(id) {
+  const cols = BUDGET_V.map(v => v>3?C.red:v>2.4?C.amber:C.green);
+  return new Chart(document.getElementById(id), {
+    data:{ labels:DEPT_N, datasets:[
+      { type:'bar',  data:BUDGET_V, backgroundColor:cols, borderRadius:4, order:2 },
+      { type:'line', data:DEPT_N.map(()=>3), borderColor:C.orange, borderWidth:1.5, borderDash:[5,5], pointRadius:0, fill:false, tension:0, order:1 }
+    ]},
+    options:{ responsive:true, maintainAspectRatio:true, aspectRatio:2.4, plugins:{legend:{display:false}},
+      scales:{ x:{grid:{display:false},ticks:{font:{size:10},color:'#888'}}, y:{grid:{color:'#F0F0F0'},ticks:{font:{size:10},color:'#888',callback:v=>v+'%'}} } }
+  });
 }
 
-// ── WIRE SLIDER ───────────────────────────────────────────────────────────────
-$('monthSlider').addEventListener('input', e => {
-  const idx = parseInt(e.target.value);
-  updateKPIs(idx);
-  updateCharts(idx);
-});
+// ── INIT ───────────────────────────────────────────────────────────────────────
+const CH = {};
+function initCharts(i) {
+  const m=i+1, l=MONTHS.slice(0,m);
+  CH.close    = trendChart('chartClose',   l, CLOSE.slice(0,m),   C.blue,   6,                    4);
+  CH.budget   = budgetBarChart('chartBudget');
+  CH.revMix   = stackedBarChart('chartRevMix',   l, MIX_LIC.slice(0,m), MIX_SUP.slice(0,m), MIX_TRN.slice(0,m));
+  CH.revTrend = multiLineChart('chartRevTrend', l, [
+    { data:IDX_LIC.slice(0,m), borderColor:C.teal,   backgroundColor:r2a(C.teal,0.07),   borderWidth:2.2, pointRadius:3, fill:true, tension:0.35, pointBackgroundColor:C.teal },
+    { data:IDX_SUP.slice(0,m), borderColor:C.blue,   backgroundColor:r2a(C.blue,0.07),   borderWidth:2.2, pointRadius:3, fill:true, tension:0.35, pointBackgroundColor:C.blue },
+    { data:IDX_TRN.slice(0,m), borderColor:C.orange, backgroundColor:r2a(C.orange,0.07), borderWidth:2.2, pointRadius:3, fill:true, tension:0.35, pointBackgroundColor:C.orange }
+  ], 96);
+  CH.ape      = trendChart('chartAPE',      l, ARR_EMP.slice(0,m), C.orange, 115,                  98);
+  CH.r40      = trendChart('chartR40',      l, R40.slice(0,m),     C.green,  40,                   28);
+  CH.ttf      = trendChart('chartTTF',      l, TTF.slice(0,m),     C.blue,   Math.round(TTF[0]*0.8), 30);
+  CH.enps     = trendChart('charteNPS',     l, ENPS.slice(0,m),    C.green,  ENPS[0]+10,           28);
+  CH.hc       = trendChart('chartHC',       l, HC.slice(0,m),      C.purple, 380,                  345);
+  CH.openR    = trendChart('chartOpenRoles',l, OPEN_R.slice(0,m),  C.amber,  10,                   0);
+  CH.renewal  = trendChart('chartRenewal',  l, RENEWAL.slice(0,m), C.orange, 90,                   84);
+  CH.ausHC    = simpleLineChart('chartAUSHC',  l, AUS_HC.slice(0,m),  C.teal, 18);
+  CH.ausRev   = simpleLineChart('chartAUSRev', l, AUS_REV.slice(0,m), C.teal,  9);
+}
 
-// ── BOOT ──────────────────────────────────────────────────────────────────────
+function updateCharts(i) {
+  const m=i+1, l=MONTHS.slice(0,m);
+  function upd(c,s){ const t=c.data.datasets[1].data[0]; c.data.labels=l; c.data.datasets[0].data=s.slice(0,m); c.data.datasets[1].data=l.map(()=>t); c.update('none'); }
+  function updS(c,s){ c.data.labels=l; c.data.datasets[0].data=s.slice(0,m); c.update('none'); }
+  function updM(c,arr){ c.data.labels=l; arr.forEach((s,j)=>{ c.data.datasets[j].data=s.slice(0,m); }); c.update('none'); }
+  function updSB(c,a,b,d){ c.data.labels=l; c.data.datasets[0].data=a.slice(0,m); c.data.datasets[1].data=b.slice(0,m); c.data.datasets[2].data=d.slice(0,m); c.update('none'); }
+  upd(CH.close,CLOSE); updSB(CH.revMix,MIX_LIC,MIX_SUP,MIX_TRN); updM(CH.revTrend,[IDX_LIC,IDX_SUP,IDX_TRN]);
+  upd(CH.ape,ARR_EMP); upd(CH.r40,R40); upd(CH.ttf,TTF); upd(CH.enps,ENPS);
+  upd(CH.hc,HC); upd(CH.openR,OPEN_R); upd(CH.renewal,RENEWAL);
+  updS(CH.ausHC,AUS_HC); updS(CH.ausRev,AUS_REV);
+}
+
+// ── KPIs ───────────────────────────────────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const sp = (cls,t) => `<span class="${cls}">${t}</span>`;
+
+function updateKPIs(i) {
+  // S1
+  const cd=CLOSE[i]; $('kpi-close').textContent=`${cd.toFixed(1)} days`; $('kpi-close-delta').innerHTML=sp(cd<=7.5?'delta-good':'delta-warn',`↓ ${(CLOSE[0]-cd).toFixed(1)} days vs. baseline · Target: 6 days`);
+  const fa=FORECAST[i]; $('kpi-forecast').textContent=`±${fa.toFixed(1)}%`; $('kpi-forecast-delta').innerHTML=sp(fa<=6?'delta-good':'delta-warn',`↓ ${(FORECAST[0]-fa).toFixed(1)}pts vs. baseline · Target: ±5%`);
+  const inT=BUDGET_V.filter(v=>v<=3).length, out=BUDGET_V.length-inT;
+  $('kpi-budget').textContent=`${inT}/${BUDGET_V.length}`; $('kpi-budget-delta').innerHTML=sp(inT>=5?'delta-good':'delta-warn',`<3% variance target · ${out} dept${out!==1?'s':''} need attention`); $('kpi-budget-card').className=`kpi-card ${inT>=5?'':'amber'}`;
+
+  // S2 Revenue
+  const dRev=(ARR_EMP[i]-100).toFixed(1);
+  $('kpi-rev-total').textContent=`+${dRev}%`; $('kpi-rev-total-delta').innerHTML=sp('delta-teal',`Indexed growth vs. Jul '24 baseline`);
+  const lic=MIX_LIC[i]; $('kpi-rev-license').textContent=`${lic.toFixed(1)}%`; $('kpi-rev-license-delta').innerHTML=sp('delta-teal',`${(lic-MIX_LIC[0])>=0?'+':''}${(lic-MIX_LIC[0]).toFixed(1)}pts mix shift · Perpetual model`);
+  const sup=MIX_SUP[i]; $('kpi-rev-support').textContent=`${sup.toFixed(1)}%`; $('kpi-rev-support-delta').innerHTML=sp('delta-good',`${(sup-MIX_SUP[0]).toFixed(1)}pts · Renewal rate >${RENEWAL[i].toFixed(0)}%`);
+  const trn=MIX_TRN[i]; $('kpi-rev-training').textContent=`${trn.toFixed(1)}%`; $('kpi-rev-training-delta').innerHTML=sp('delta-warn',`${(trn-MIX_TRN[0]).toFixed(1)}pts · Certifications + integrator programs`);
+
+  // S3
+  const ape=ARR_EMP[i], dape=(ape-100).toFixed(1);
+  $('kpi-ape').textContent=`+${dape}%`; $('kpi-ape-delta').innerHTML=sp(parseFloat(dape)>=8?'delta-good':'delta-warn',`Target: +10–15% · Tracking ahead`);
+  const sg=SGNA[i]; $('kpi-sgna').textContent=`${sg.toFixed(1)}%`; $('kpi-sgna-delta').innerHTML=sp(sg<=25.5?'delta-good':'delta-warn',`↓ ${(SGNA[0]-sg).toFixed(1)}pts since baseline · Target: ~24%`);
+  const r4=R40[i]; $('kpi-r40').textContent=`${r4}`; $('kpi-r40-delta').innerHTML=sp(r4>=40?'delta-good':'delta-warn',`Growth + Profitability · Target: ≥40 · ${r4>=40?'✓ On target':'Approaching'}`); $('kpi-r40-card').className=`kpi-card ${r4>=40?'green':'amber'}`;
+
+  // S4
+  const ttfv=TTF[i], pttf=((TTF[0]-ttfv)/TTF[0]*100).toFixed(0);
+  $('kpi-ttf').textContent=`${Math.round(ttfv)} days`; $('kpi-ttf-delta').innerHTML=sp(parseFloat(pttf)>=15?'delta-good':'delta-warn',`↓ ${pttf}% vs. baseline · Target: −20% (${Math.round(TTF[0]*0.8)} days)`);
+  const enpsv=ENPS[i], de=enpsv-ENPS[0]; $('kpi-enps').textContent=`${enpsv}`; $('kpi-enps-delta').innerHTML=sp(de>=7?'delta-good':'delta-warn',`+${de} pts since baseline · Target: +10 pts (${ENPS[0]+10})`);
+  const tv=TURNOVER[i]; $('kpi-turnover').textContent=`${tv.toFixed(1)}%`; $('kpi-turnover-delta').innerHTML=sp(tv<=10.5?'delta-good':'delta-warn',`↓ ${(TURNOVER[0]-tv).toFixed(1)}pts · Target: <10%`); $('kpi-turnover-card').className=`kpi-card ${tv<=10?'green':''}`;
+  const ea=EARLY_AT[i], pea=((EARLY_AT[0]-ea)/EARLY_AT[0]*100).toFixed(0); $('kpi-ea').textContent=`${ea.toFixed(1)}%`; $('kpi-ea-delta').innerHTML=sp(parseFloat(pea)>=25?'delta-good':'delta-warn',`↓ ${pea}% vs. baseline · Target: −30% (${(EARLY_AT[0]*0.7).toFixed(1)}%)`);
+
+  // S5 Headcount
+  const hcv=HC[i]; $('kpi-hc').textContent=`${hcv}`; $('kpi-hc-delta').innerHTML=sp('delta-purple',`+${hcv-HC[0]} since baseline · US + AUS combined`);
+  const orv=OPEN_R[i]; $('kpi-open-roles').textContent=`${orv}`; $('kpi-open-roles-delta').innerHTML=sp(orv<=12?'delta-good':'delta-warn',`↓ ${OPEN_R[0]-orv} vs. baseline · Target: <10`);
+  const oav=OFFER_A[i]; $('kpi-offer').textContent=`${oav}%`; $('kpi-offer-delta').innerHTML=sp(oav>=88?'delta-good':'delta-warn',`+${oav-OFFER_A[0]}pts vs. baseline · Target: ≥90%`);
+  const hcPct=((HC[i]/HC_PLAN[i])*100).toFixed(1); $('kpi-hcplan').textContent=`${hcPct}%`; $('kpi-hcplan-delta').innerHTML=sp(Math.abs(parseFloat(hcPct)-100)<=1?'delta-good':'delta-warn',`of budgeted headcount · Plan: ${HC_PLAN[i]}`); $('kpi-hcplan-card').className=`kpi-card ${Math.abs(parseFloat(hcPct)-100)<=1?'green':'amber'}`;
+
+  // S6 Control
+  const rr=RENEWAL[i]; $('kpi-rr').textContent=`${rr.toFixed(1)}%`; $('kpi-rr-delta').innerHTML=sp(rr>=90?'delta-good':'delta-warn',`Renewal rate · Target: >90%`); $('kpi-rr-card').className=`kpi-card ${rr>=90?'green':''}`;
+
+  // S7 International
+  const ausHCv=AUS_HC[i]; $('kpi-aus-hc').textContent=`${ausHCv}`; $('kpi-aus-hc-delta').innerHTML=sp('delta-teal',`+${ausHCv-AUS_HC[0]} since baseline · Brisbane HQ`);
+  const ausRv=AUS_REV[i]; $('kpi-aus-rev').textContent=`${ausRv.toFixed(1)}%`; $('kpi-aus-rev-delta').innerHTML=sp('delta-teal',`↑ ${(ausRv-AUS_REV[0]).toFixed(1)}pts · APAC channel expansion`);
+  const fxv=FX_RATE[i]; $('kpi-fx').textContent=`${fxv.toFixed(3)}`; $('kpi-fx-delta').innerHTML=sp(fxv>=0.645?'delta-good':'delta-warn',`AUD/USD spot · ${fxv>=FX_RATE[0]?'↑ Favorable':'↓ Monitoring'} vs. baseline`);
+
+  // S8 Initiatives
+  const bump = i * 1.4;
+  $('initBody').innerHTML = INITS.map(it => {
+    const p = Math.min(Math.round(it.prog + bump), 96);
+    const col = it.rag==='green' ? C.green : C.amber;
+    return `<tr>
+      <td><div class="init-name">${it.name}</div><div class="init-desc">${it.desc}</div></td>
+      <td><span class="rag rag-${it.rag}">${it.ragLbl}</span></td>
+      <td><div style="font-size:.74rem;font-weight:600;color:${col};margin-bottom:4px;">${p}%</div><div class="pb-wrap"><div class="pb-fill" style="width:${p}%;background:${col};"></div></div></td>
+      <td style="font-size:.72rem;color:#555;">${it.ms}</td>
+    </tr>`;
+  }).join('');
+
+  $('headerMonth').textContent = MONTHS[i];
+  $('sliderLabel').textContent = MONTHS[i];
+}
+
+// ── BOOT ───────────────────────────────────────────────────────────────────────
+$('monthSlider').addEventListener('input', e => { const i=parseInt(e.target.value); updateKPIs(i); updateCharts(i); });
 initCharts(8);
 updateKPIs(8);
 </script>
